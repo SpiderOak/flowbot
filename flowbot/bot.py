@@ -43,8 +43,8 @@ class Flowbot(object):
     def commands(self):
         """Override this method to provide customer commands.
 
-        Returns a dict where the key is the command trigger is a function
-        which accepts the message as a parameter.
+        Returns a dict where the key is the command trigger and the value is
+        a function which accepts the message as a parameter.
         """
         return {}
 
