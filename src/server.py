@@ -1,9 +1,14 @@
 from flow import Flow
 import logging
+import sys
 
 from . import settings
 
-LOG = logging.getLogger("flowbot.server")
+LOG = logging.getLogger(__file__)
+_log_handler = logging.StreamHandler(sys.stdout)
+_log_handler.setLevel(logging.DEBUG)
+LOG.addHandler(_log_handler)
+LOG.setLevel(logging.DEBUG)
 
 
 class Server(object):
