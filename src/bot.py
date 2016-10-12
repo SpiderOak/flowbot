@@ -3,7 +3,7 @@ from .server import Server
 from . import settings
 
 
-class Flowbot(object):
+class FlowBot(object):
 
     def __init__(self):
         """Initialize the bot with an active flow instance."""
