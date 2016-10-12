@@ -1,14 +1,9 @@
 from flow import Flow
 import logging
-import sys
 
 from . import settings
 
-LOG = logging.getLogger(__file__)
-_log_handler = logging.StreamHandler(sys.stdout)
-_log_handler.setLevel(logging.DEBUG)
-LOG.addHandler(_log_handler)
-LOG.setLevel(logging.DEBUG)
+LOG = logging.getLogger(__name__)
 
 
 class Server(object):
@@ -18,8 +13,9 @@ class Server(object):
         """Initialize a flow server instance."""
         self.flow = Flow()
 
-        self._start_server()
-        self._setup_account()
+        if not self._start_server():
+            self._setup_account_and_start_server()
+
         self._setup_org()
 
     def _start_server(self):
@@ -27,10 +23,11 @@ class Server(object):
         try:
             self.flow.start_up(username=settings.USERNAME)
             LOG.info("local account '%s' started", settings.USERNAME)
+            return True
         except Flow.FlowError as start_up_err:
             LOG.debug("start_up failed: '%s'", str(start_up_err))
 
-    def _setup_account(self):
+    def _setup_account_and_start_server(self):
         """Create an account, if it doesn't already exist."""
         try:
             self.flow.create_account(

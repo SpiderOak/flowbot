@@ -1,6 +1,9 @@
 from .channel_db import ChannelDb
 from .server import Server
 from . import settings
+import logging
+
+LOG = logging.getLogger(__name__)
 
 
 class FlowBot(object):
@@ -8,11 +11,25 @@ class FlowBot(object):
     def __init__(self):
         """Initialize the bot with an active flow instance."""
         self.server = Server()
+
         self.account_id = self.server.flow.account_id()
         self._commands = self._register_commands()
         self.channel_db = ChannelDb(self.server)
 
-    def reply(self, response_msg, original_message):
+        @self.server.flow.message
+        def _handle_message(notification_type, message):
+            self.handle_message(notification_type, message)
+
+    def run(self):
+        """Run the bot."""
+        try:
+            LOG.info('FlowBot is starting up...')
+            self.server.flow.process_notifications()
+        except(KeyboardInterrupt, SystemExit):
+            LOG.info('FlowBot is shutting down...')
+        self.server.flow.terminate()
+
+    def reply(self, original_message, response_msg):
         """Reply to the original message in the same channel."""
         self.server.flow.send_message(
             cid=original_message.get('channelId'),
@@ -27,7 +44,7 @@ class FlowBot(object):
 
     def mentioned(self, message):
         """Determine if this bot was mentioned in the message."""
-        username_mention = '@' + settings.FLOWBOT_USERNAME.lower()
+        username_mention = '@' + settings.USERNAME.lower()
         return username_mention in message.get('text', '').lower()
 
     def from_admin(self, message):
@@ -70,4 +87,4 @@ class FlowBot(object):
             message_text = message.get('text', '')
             for match, command in self._commands:
                 if match in message_text:
-                    return command(message)
+                    command(message)

@@ -6,7 +6,7 @@ def mentioned(bot_command):
     @wraps(bot_command)
     def _func(bot, message):
         if bot.mentioned(message):
-            return _func(bot, message)
+            return bot_command(bot, message)
     return _func
 
 
@@ -15,5 +15,5 @@ def admin_only(bot_command):
     @wraps(bot_command)
     def _func(bot, message):
         if bot.from_admin(message):
-            return _func(bot, message)
+            return bot_command(bot, message)
     return _func
