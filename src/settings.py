@@ -8,13 +8,7 @@ import os
 
 USERNAME = os.environ.get('FLOWBOT_USERNAME', '')
 PASSWORD = os.environ.get('FLOWBOT_PASSWORD', '')
-
-_org_id = os.environ.get('FLOWBOT_ORG_ID', '')
-if _org_id.isdigit():
-    ORG_ID = int(_org_id)
-else:
-    ORG_ID = None
-
+ORG_ID = os.environ.get('FLOWBOT_ORG_ID', '')
 DB_CHANNEL_NAME = os.environ.get('FLOWBOT_DB_CHANNEL_NAME', '')
 
 # Prefetch keys trigger loading of db records into memory at startup. This way
