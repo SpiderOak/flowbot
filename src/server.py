@@ -15,7 +15,6 @@ class Server(object):
 
         self._start_server()
         self._setup_account()
-        self._setup_device()
         self._setup_org()
 
     def _start_server(self):
@@ -35,17 +34,6 @@ class Server(object):
             )
         except Flow.FlowError as create_account_err:
             LOG.debug("Create account failed: '%s'", str(create_account_err))
-
-    def _setup_device(self):
-        """Create a device if it doesn't already exist."""
-        try:
-            self.flow.create_device(
-                username=settings.USERNAME,
-                password=settings.PASSWORD
-            )
-            LOG.info("local Device for '%s' created", settings.USERNAME)
-        except Flow.FlowError as create_device_err:
-            LOG.debug("create_device failed: '%s'", str(create_device_err))
 
     def _setup_org(self):
         """"Join the org if not already a member."""
