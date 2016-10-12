@@ -1,5 +1,12 @@
 # flowbot-barebones
 A boilerplate for quickly prototyping Flow (Semaphor) Bots!
 
-# Setup
-
+# Install
+1. Make sure `flow-python` is installed in your environment: 
+```python
+pip install git+git://github.com/SpiderOak/flow-python.git@master
+```
+2. Install `flowbot-barebones`
+```python
+pip install git+git://github.com/SpiderOak/flowbot-barebones.git@master
+```
