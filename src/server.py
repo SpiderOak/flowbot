@@ -3,7 +3,7 @@ import logging
 
 from . import settings
 
-LOG = logging.get_logger("flowbot.server")
+LOG = logging.getLogger("flowbot.server")
 
 
 class Server(object):
