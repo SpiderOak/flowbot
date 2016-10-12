@@ -20,6 +20,11 @@ class FlowBot(object):
             msg=response_msg
         )
 
+    def handle_message(self, notification_type, message):
+        """Handle an incoming flow message."""
+        for m in message.get('regularMessages', []):
+            self._process_commands(m)
+
     def mentioned(self, message):
         """Determine if this bot was mentioned in the message."""
         username_mention = '@' + settings.FLOWBOT_USERNAME.lower()
