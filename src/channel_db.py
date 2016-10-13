@@ -1,17 +1,16 @@
 """ChannelDb impelements a "Channel as a Database" service for bot use."""
 import json
 
-from . import settings
-
 
 class ChannelDb(object):
     """Flow Channel as a Database."""
 
-    def __init__(self, server):
+    def __init__(self, server, config):
         """Initialize the channel db using the server connection passed."""
+        self.config = config
         self.server = server
         self.account_id = self.server.flow.account_id()
-        self._data = self._get_all(settings.PREFETCH_KEYS)
+        self._data = self._get_all(config.db_keys)
 
     def get(self, key):
         """Get all records for the given key in the channel database.
@@ -24,7 +23,7 @@ class ChannelDb(object):
             return self._data[key]
 
         messages = self.server.flow.search(
-            oid=settings.ORG_ID,
+            oid=self.config.org_id,
             cid=self._get_db_channel_id(),
             search=key)
 
@@ -36,7 +35,7 @@ class ChannelDb(object):
 
         self.server.flow.send_message(
             cid=self._get_or_create_db_channel(),
-            oid=settings.ORG_ID,
+            oid=self.config_org_id,
             msg=json.dumps({key: value})
         )
 
@@ -71,15 +70,15 @@ class ChannelDb(object):
 
     def _get_db_channel_id(self):
         """Determine if the db channel already exists."""
-        for channel in self.server.flow.enumerate_channels(settings.ORG_ID):
-            if channel['name'] == settings.DB_CHANNEL_NAME:
+        for channel in self.server.flow.enumerate_channels(self.config.org_id):
+            if channel['name'] == self.config.db_channel:
                 return channel['id']
         return None
 
     def _create_db_channel(self):
         """Create a db channel for the given org."""
         return self.server.flow.new_channel(
-            settings.ORG_ID, settings.DB_CHANNEL_NAME)
+            self.config.org_id, self.config.db_channel)
 
     def _is_author(self, message):
         """Determine if the bot is the author of this message."""

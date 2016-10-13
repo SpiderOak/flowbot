@@ -1,20 +1,22 @@
+"""bot.py - implements the FlowBot class, a boilerplate for other bots."""
 from .channel_db import ChannelDb
 from .server import Server
-from . import settings
+from .config import Config
 import logging
 
 LOG = logging.getLogger(__name__)
 
 
 class FlowBot(object):
+    """A boilerplate for bot development."""
 
-    def __init__(self):
+    def __init__(self, settings):
         """Initialize the bot with an active flow instance."""
-        self.server = Server()
-
+        self.config = Config(settings)
+        self.server = Server(self.config)
         self.account_id = self.server.flow.account_id()
         self._commands = self._register_commands()
-        self.channel_db = ChannelDb(self.server)
+        self.channel_db = ChannelDb(self.server, self.config)
 
         @self.server.flow.message
         def _handle_message(notification_type, message):
@@ -33,7 +35,7 @@ class FlowBot(object):
         """Reply to the original message in the same channel."""
         self.server.flow.send_message(
             cid=original_message.get('channelId'),
-            oid=settings.ORG_ID,
+            oid=self.config.org_id,
             msg=response_msg
         )
 
@@ -44,7 +46,7 @@ class FlowBot(object):
 
     def mentioned(self, message):
         """Determine if this bot was mentioned in the message."""
-        username_mention = '@' + settings.USERNAME.lower()
+        username_mention = '@' + self.config.username.lower()
         return username_mention in message.get('text', '').lower()
 
     def from_admin(self, message):
