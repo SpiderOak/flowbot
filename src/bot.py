@@ -3,6 +3,7 @@ from .channel_db import ChannelDb
 from .server import Server
 from .config import Config
 import logging
+from datetime import datetime
 
 LOG = logging.getLogger(__name__)
 
@@ -85,8 +86,21 @@ class FlowBot(object):
 
     def _process_commands(self, message):
         """Detect and execute commands within the message."""
-        if not self._is_author(message):
+        if not self._is_author(message) and not self._is_old(message):
             message_text = message.get('text', '')
             for match, command in self._commands:
                 if match in message_text:
                     command(message)
+
+    def _is_old(self, message):
+        """Determine if this is an old message.
+
+        Old message age is configured in Config.
+        """
+        if 'creationTime' not in message:
+            return False
+
+        creation_time = datetime.fromtimestamp(message['creationTime'] / 1000)
+        now_time = datetime.utcnow()
+        age = now_time - creation_time
+        return age.seconds > self.config.message_age_limit
