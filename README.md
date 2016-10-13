@@ -63,10 +63,6 @@ When you initiate a FlowBot, you can provide some or all of the following settin
 - `org_id`(required): the id of the team you want your bot to be a member of
 - `db_keys`: if you wish to take advantage of the channel-as-a-db service, this is a list of keys that should be pre-fetched from that channel on bot startup
 - `db_channel`: the name of the db-channel, if you leave this blank the bot will create a random channel name
-- `flowappglue`
-- `uri`
-- `host`
-- `port`
 
 
 ## Example Bots
