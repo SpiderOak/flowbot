@@ -100,7 +100,7 @@ class FlowBot(object):
         if 'creationTime' not in message:
             return False
 
-        creation_time = datetime.utcfromtimestamp(message['creationTime'] / 1000)  # NOQA
+        creation_time = datetime.utcfromtimestamp(message['creationTime'] / 1000.0)  # NOQA
         now_time = datetime.utcnow()
         age = now_time - creation_time
         return age.seconds > self.config.message_age_limit
