@@ -23,6 +23,12 @@ class Config(object):
         self.uri = settings.get('uri', definitions.DEFAULT_URI)
         self.host = settings.get('host', definitions.DEFAULT_SERVER)
         self.port = settings.get('port', definitions.DEFAULT_PORT)
+        self.db_dir = settings.get('db_dir', definitions.get_default_db_path()),  # NOQA
+        self.schema_dir = settings.get('schema_dir', definitions.get_default_schema_path()),  # NOQA
+        self.attachment_dir = settings.get('attachment_dir', definitions.get_default_attachment_path()),  # NOQA
+        self.use_tls = settings.get('use_tls', definitions.DEFAULT_USE_TLS),
+        self.glue_out_filename = settings.get('glue_out_filename', definitions.get_default_glue_out_filename()),  # NOQA
+        self.decrement_file = settings.get('decrement_file', None)
 
     def get_or_raise(self, settings, key):
         """Return the settings value or raise 'ImproperlyConfigured'."""

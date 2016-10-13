@@ -15,7 +15,13 @@ class Server(object):
             server_uri=config.uri,
             flowappglue=config.flowappglue,
             host=config.host,
-            port=config.port
+            port=config.port,
+            schema_dir=config.schema_dir,
+            db_dir=config.db_dir,
+            attachment_dir=config.attachment_dir,
+            use_tls=config.use_tls,
+            glue_out_filename=config.glue_out_filename,
+            decrement_file=config.decrement_file
         )
 
         if not self._start_server():
