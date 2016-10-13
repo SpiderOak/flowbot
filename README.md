@@ -14,7 +14,7 @@ pip install git+ssh://git@github.com/SpiderOak/flowbot-barebones.git@master
 ```
 
 ## Usage
-Create a new bot class that inherits the FlowBot class:
+Create a new bot class that inherits the FlowBot class. If you want your bot to respond to messages, you must implement the `commands` method which should return a dict that maps a trigger word to a method that accepts the triggering-message as a parameter. 
 
 ```python
 # mybot.py
