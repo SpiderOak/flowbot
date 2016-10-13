@@ -18,7 +18,7 @@ class Config(object):
         self.password = self.get_or_raise(settings, 'password')
         self.org_id = self.get_or_raise(settings, 'org_id')
         self.message_age_limit = self.get_message_age(settings)
-        self.db_channel = settings.get('db_channel', self.random_db_channel())
+        self.db_channel = settings.get('db_channel', 'FLOWBOT_DB_CHANNEL')
         self.db_keys = settings.get('db_keys', [])
         self.flowappglue = settings.get('flowappglue', definitions.get_default_flowappglue_path())  # NOQA
         self.uri = settings.get('uri', definitions.DEFAULT_URI)
@@ -44,7 +44,3 @@ class Config(object):
             raise ImproperlyConfigured(
                 'Message age limit should be integer number of seconds.')
         return message_age_limit
-
-    def random_db_channel(self):
-        """Return a random db channel name."""
-        return 'BOT_DB_CHANNEL::%s' % (uuid.uuid4().hex)

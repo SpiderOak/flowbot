@@ -5,6 +5,8 @@ import json
 class ChannelDb(object):
     """Flow Channel as a Database."""
 
+    _data = {}
+
     def __init__(self, server, config):
         """Initialize the channel db using the server connection passed."""
         self.config = config
@@ -35,7 +37,7 @@ class ChannelDb(object):
 
         self.server.flow.send_message(
             cid=self._get_or_create_db_channel(),
-            oid=self.config_org_id,
+            oid=self.config.org_id,
             msg=json.dumps({key: value})
         )
 
