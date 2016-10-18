@@ -61,6 +61,11 @@ class FlowBot(object):
                     return True
         return False
 
+    def channels(self):
+        """Return the list of channel ids to which this bot belongs."""
+        channels = self.server.flow.enumerate_channels(self.config.org_id)
+        return [c['id'] for c in channels]
+
     def _is_author(self, message):
         """Determine if the bot is the author of this message."""
         return message['senderAccountId'] == self.account_id
