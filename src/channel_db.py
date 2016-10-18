@@ -31,6 +31,10 @@ class ChannelDb(object):
 
         return self._get_data_from_messages(messages, key)
 
+    def get_last(self, key):
+        """Get the most recent record for the given key."""
+        return self.get(key)[-1]
+
     def new(self, key, value):
         """Save a new record in both memory (self._data) and the db-channel."""
         self._data.setdefault(key, []).append(value)
