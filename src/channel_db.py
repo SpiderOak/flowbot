@@ -33,7 +33,8 @@ class ChannelDb(object):
 
     def get_last(self, key):
         """Get the most recent record for the given key."""
-        return self.get(key)[-1]
+        all_records = self.get(key)
+        return all_records[-1] if all_records else None
 
     def new(self, key, value):
         """Save a new record in both memory (self._data) and the db-channel."""
