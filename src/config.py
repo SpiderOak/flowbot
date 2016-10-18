@@ -1,6 +1,6 @@
 """settings.py - Configuration model for FlowBot."""
-import uuid
 from flow import definitions
+import base64
 
 
 class ImproperlyConfigured(object):
@@ -17,6 +17,11 @@ class Config(object):
         self.username = self.get_or_raise(settings, 'username')
         self.password = self.get_or_raise(settings, 'password')
         self.org_id = self.get_or_raise(settings, 'org_id')
+
+        self.display_name = settings.get('display_name', None)
+        self.biography = settings.get('biography', None)
+        self.photo = self.get_photo(settings)
+
         self.message_age_limit = self.get_message_age(settings)
         self.db_channel = settings.get('db_channel', 'FLOWBOT_DB_CHANNEL')
         self.db_keys = settings.get('db_keys', [])
@@ -44,3 +49,15 @@ class Config(object):
             raise ImproperlyConfigured(
                 'Message age limit should be integer number of seconds.')
         return message_age_limit
+
+    def get_photo(self, settings):
+        """Return a base64 image URI based on image path in settings."""
+        path = settings.get('photo', None)
+
+        if path:
+            with open(path, "rb") as image_file:
+                image_raw_data = image_file.read()
+            return "data:image/png;base64,%s" % (
+                base64.b64encode(image_raw_data),
+            )
+        return None

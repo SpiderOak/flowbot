@@ -28,6 +28,7 @@ class Server(object):
             self._setup_account_and_start_server()
 
         self._setup_org()
+        self._set_profile()
 
     def _start_server(self):
         """Attempt to start the flow server."""
@@ -54,3 +55,14 @@ class Server(object):
             self.flow.new_org_join_request(oid=self.config.org_id)
         except Flow.FlowError as org_join_err:
             LOG.debug("org join failed: '%s'", str(org_join_err))
+
+    def _set_profile(self):
+        """Set the user profile based on the items passed in the config."""
+        profile = self.flow.get_profile_item_json(
+            display_name=getattr(self.config, 'display_name', None),
+            biography=getattr(self.config, 'biography', None),
+            photo=getattr(self.config, 'photo', None),
+
+        )
+        print(profile)
+        self.flow.set_profile('profile', profile)
