@@ -34,11 +34,23 @@ class FlowBot(object):
 
     def reply(self, original_message, response_msg):
         """Reply to the original message in the same channel."""
-        self.server.flow.send_message(
-            cid=original_message.get('channelId'),
-            oid=self.config.org_id,
+        self.message_channel(
+            channel_id=original_message.get('channelId'),
             msg=response_msg
         )
+
+    def message_channel(self, channel_id, msg):
+        """Send a message to the channel."""
+        self.server.flow.send_message(
+            cid=channel_id,
+            oid=self.config.org_id,
+            msg=msg
+        )
+
+    def message_all_channels(self, msg):
+        """Send a message to all this bot's channels."""
+        for channel_id in self.channels():
+            self.message_channel(channel_id, msg)
 
     def handle_message(self, notification_type, message):
         """Handle an incoming flow message."""
