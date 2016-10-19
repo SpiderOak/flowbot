@@ -25,7 +25,8 @@ class Server(object):
         )
 
         if not self._start_server():
-            self._setup_account_and_start_server()
+            if not self._setup_device():
+                self._setup_account()
 
         self._setup_org()
         self._set_profile()
@@ -39,7 +40,18 @@ class Server(object):
         except Flow.FlowError as start_up_err:
             LOG.debug("start_up failed: '%s'", str(start_up_err))
 
-    def _setup_account_and_start_server(self):
+    def _setup_device(self):
+        """Create a device for an existing account."""
+        try:
+            self.flow.create_device(
+                username=self.config.username,
+                password=self.config.username
+            )
+            return True
+        except Flow.FlowError as create_device_err:
+            LOG.debug("Create device failed: '%s'", str(create_device_err))
+
+    def _setup_account(self):
         """Create an account, if it doesn't already exist."""
         try:
             self.flow.create_account(
