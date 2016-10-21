@@ -6,6 +6,7 @@ import logging
 from datetime import datetime
 import threading
 import time
+import json
 
 try:
     import Queue
@@ -151,7 +152,21 @@ class FlowBot(object):
     def handle_message(self, notification_type, message):
         """Handle an incoming flow message."""
         for m in message.get('regularMessages', []):
+            m = self._conform_other_data(m)
             self._process_commands(m)
+
+    def _conform_other_data(self, message):
+        """If otherData exists in message, try to make it a dict.
+
+        Until flowapp correctly handles this, we should just try to convert it
+        to a dict if the object exists.
+        """
+        if 'otherData' in message:
+            try:
+                message['otherData'] = json.loads(message['otherData'])
+            except ValueError:
+                pass
+        return message
 
     def mentioned(self, message):
         """Determine if this bot was mentioned in the message."""
