@@ -4,6 +4,14 @@ from .server import Server
 from .config import Config
 import logging
 from datetime import datetime
+import threading
+import time
+
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
+
 
 LOG = logging.getLogger(__name__)
 
@@ -19,18 +27,104 @@ class FlowBot(object):
         self._commands = self._register_commands()
         self.channel_db = ChannelDb(self.server, self.config)
 
+        # Setup Queue
+        # FIXME: Do we want a max size and a handler for that?
+        self.queue = Queue.Queue()
+
+        # Setup threads and events
+        self.threads_running = False
+
+        # process_notifications
+        # flow.process_notifications has its own event for its loop
+        # that is cleared on flow.terminate()
+        self.bot_thread = threading.Thread(
+            target=self.server.flow.process_notifications,
+            args=()
+        )
+
+        # process_msg_queue
+        self.message_queue_thread = threading.Thread(
+            target=self.process_msg_queue,
+            args=()
+        )
+        self.loop_msg_queue = threading.Event()
+
         @self.server.flow.message
         def _handle_message(notification_type, message):
             self.handle_message(notification_type, message)
 
-    def run(self):
-        """Run the bot."""
+    def run(self, block=True):
+        """Run the bot"""
         try:
             LOG.info('FlowBot is starting up...')
-            self.server.flow.process_notifications()
-        except(KeyboardInterrupt, SystemExit):
-            LOG.info('FlowBot is shutting down...')
-        self.server.flow.terminate()
+            self.threads_running = True
+            self.loop_msg_queue.set()
+            self.message_queue_thread.start()
+            if block:
+                self.server.flow.process_notifications()
+            else:
+                self.bot_thread.start()
+        except (KeyboardInterrupt, SystemExit):
+            LOG.info('Interrupt Received')
+            # Narrow window when not blocked that this could trigger
+            # Avoid a potential race from other threads not stopping.
+            self.cleanup()
+        except Exception:
+            LOG.exception('FlowBot fatal exception')
+            # Stop other threads to prevent deadlock
+            self.cleanup()
+        finally:
+            if block:
+                # Always cleanup when blocked to clear the
+                # background thread.
+                self.cleanup()
+
+    def cleanup(self):
+        """Cleanup to destroy threads"""
+        LOG.info('FlowBot is shutting down...')
+        if self.threads_running:
+            LOG.info('Thread cleanup...')
+            self.loop_msg_queue.clear()
+        if self.server.flow:
+            self.server.flow.terminate()
+
+        self.threads_running = False
+
+    def process_msg_queue(self):
+        """Read messages from the queue and send them to flow"""
+        LOG.info('Message queue thread started...')
+        while self.loop_msg_queue.is_set():
+            if not self.queue.empty():
+                try:
+                    LOG.debug('Message found in the queue. Processing')
+                    message = self.queue.get(block=False)
+                    self.server.flow.send_message(**message)
+                    self.queue.task_done()
+                except Queue.Empty:
+                    LOG.debug('Queue empty when attempting to grab message')
+                except:
+                    raise
+            time.sleep(0.1)
+        LOG.info('Message queue thread hase ended...')
+
+    def send_message(self, oid, cid, msg, attachments=None,
+                     other_data=None, push_notify_account_ids=None,
+                     timeout=None):
+        """Wrapper for send_message.  Send to our queue instead of
+        directly to flow.  Prevents blocking on a long-running
+        send_message."""
+
+        self.queue.put(
+            {
+                "oid": oid,
+                "cid": cid,
+                "msg": msg,
+                "attachments": attachments,
+                "other_data": other_data,
+                "push_notify_account_ids": push_notify_account_ids,
+                "timeout": timeout,
+            }
+        )
 
     def reply(self, original_message, response_msg, highlight=None):
         """Reply to the original message in the same channel."""
@@ -41,8 +135,8 @@ class FlowBot(object):
         )
 
     def message_channel(self, channel_id, msg, highlight=None):
-        """Send a message to the channel, optionally highlight account ids."""
-        self.server.flow.send_message(
+        """Send a message to the channel."""
+        self.send_message(
             cid=channel_id,
             oid=self.config.org_id,
             msg=msg,
