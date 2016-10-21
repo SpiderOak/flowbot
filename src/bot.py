@@ -155,8 +155,9 @@ class FlowBot(object):
 
     def mentioned(self, message):
         """Determine if this bot was mentioned in the message."""
-        username_mention = '@' + self.config.username.lower()
-        return username_mention in message.get('text', '').lower()
+        other_data = message.get('otherData', {})
+        highlighted = other_data.get('highlighted', [])
+        return self.account_id in highlighted
 
     def from_admin(self, message):
         """Determine if this message was sent from an admin of the org."""
