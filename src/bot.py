@@ -32,25 +32,27 @@ class FlowBot(object):
             LOG.info('FlowBot is shutting down...')
         self.server.flow.terminate()
 
-    def reply(self, original_message, response_msg):
+    def reply(self, original_message, response_msg, highlight=None):
         """Reply to the original message in the same channel."""
         self.message_channel(
             channel_id=original_message.get('channelId'),
-            msg=response_msg
+            msg=response_msg,
+            highlight=highlight
         )
 
-    def message_channel(self, channel_id, msg):
-        """Send a message to the channel."""
+    def message_channel(self, channel_id, msg, highlight=None):
+        """Send a message to the channel, optionally highlight account ids."""
         self.server.flow.send_message(
             cid=channel_id,
             oid=self.config.org_id,
-            msg=msg
+            msg=msg,
+            other_data={'highlighted': highlight} if highlight else None
         )
 
-    def message_all_channels(self, msg):
+    def message_all_channels(self, msg, highlight=None):
         """Send a message to all this bot's channels."""
         for channel_id in self.channels():
-            self.message_channel(channel_id, msg)
+            self.message_channel(channel_id, msg, highlight)
 
     def handle_message(self, notification_type, message):
         """Handle an incoming flow message."""
