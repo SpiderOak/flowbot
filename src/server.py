@@ -76,5 +76,4 @@ class Server(object):
             photo=getattr(self.config, 'photo', None),
 
         )
-        print(profile)
         self.flow.set_profile('profile', profile)
