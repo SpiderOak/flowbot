@@ -168,11 +168,17 @@ class FlowBot(object):
                 pass
         return message
 
-    def mentioned(self, message):
-        """Determine if this bot was mentioned in the message."""
+    def mentioned(self, message, account_id=None):
+        """Determine if this account_id was mentioned in the message.
+
+        If no account_id was passed, determine if this bot was mentioned.
+        """
+        if not account_id:
+            account_id = self.account_id
+
         other_data = message.get('otherData', {})
         highlighted = other_data.get('highlighted', [])
-        return self.account_id in highlighted
+        return account_id in highlighted
 
     def from_admin(self, message):
         """Determine if this message was sent from an admin of the org."""
