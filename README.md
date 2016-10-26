@@ -1,3 +1,5 @@
+> Please Note: This project has not undergone a security review.
+
 # flowbot
 A boilerplate for quickly prototyping [Semaphor](https://spideroak.com/solutions/semaphor) Bots!
 
