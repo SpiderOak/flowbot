@@ -7,14 +7,14 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='flowbot-barebones',
+    name='flowbot',
     version='0.1',
     package_dir={"flowbot": "src"},
     packages=["flowbot"],
     license='MPL 2.0',
     description='A boilerplate for flowbots.',
     long_description=README,
-    url='https://github.com/SpiderOak/flowbot-barebones',
+    url='https://github.com/SpiderOak/flowbot',
     author='Quentin Donnellan',
     author_email='quentin@spideroak.com'
 )

@@ -1,18 +1,18 @@
-# flowbot-barebones
+# flowbot
 A boilerplate for quickly prototyping [Semaphor](https://spideroak.com/solutions/semaphor) Bots!
 
-## Developing with `flowbot-barebones`
-To build a bot with flowbot barebones, you first need to install `flow-python` and `flowbot-barebones` into your local environment. Until both of those repos are listed on pypi, just run these commands:
+## Developing with `flowbot`
+To build a bot with `flowbot`, you first need to install `flow-python` and `flowbot` into your local environment. Until both of those repos are listed on pypi, just run these commands:
 
 ```
 pip install git+git://github.com/SpiderOak/flow-python.git@master
-pip install git+ssh://git@github.com/SpiderOak/flowbot-barebones.git@master
+pip install git+ssh://git@github.com/SpiderOak/flowbot.git@master
 ```
 
 You can now import the boilerpate bot:
 
 ```python
-from flobot import FlowBot
+from flowbot import FlowBot
 ```
 
 ### Example Usage
