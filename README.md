@@ -12,11 +12,11 @@ pip install git+ssh://git@github.com/SpiderOak/flowbot-barebones.git@master
 You can now import the boilerpate bot:
 
 ```python
-from flobot import Flowbot
+from flobot import FlowBot
 ```
 
 ### Example Usage
-Create a new bot class that inherits the FlowBot class. If you want your bot to respond to messages, you must implement the `commands` method which should return a dict that maps a trigger word to a method that accepts the triggering-message as a parameter. 
+Create a new bot class that inherits the `FlowBot` class. If you want your bot to respond to messages, you must implement the `commands` method which should return a dict that maps a trigger word to a method that accepts the triggering-message as a parameter. 
 
 ```python
 # mybot.py
@@ -92,6 +92,35 @@ Determine if the message was sent from an admin of the channel.
 
 #### `channels()`
 Returns a list of all channels this bot is a member of.
+
+### Incoming Message Decorators
+FlowBots can respond to any message in a channel, although you may only want the bot to focus on specific messages (i.e. Messages in which the bot's username was mentioned, or messages from an admin, etc.). FlowBot provides a couple useful decorators for handling these cases:
+
+#### `@mentioned`
+Only respond to a message if the bot was mentioned. For example:
+
+```python
+from flowbot import FlowBot
+from flowbot.decorators import mentioned
+
+class MyBot(FlowBot):
+    def commands(self):
+        return {
+            'hello': self.hello
+        }
+
+    @mentioned
+    def hello(self, message):
+        """Respond to to the message with 'Hello!'."""
+        self.reply(message, "Hello!")
+```
+
+In this example (above) `MyBot` responds to the trigger word `hello`, but only if the bot's username is mentioned in the message.
+
+#### `@admin_only`
+Only respond to a message if the message was sent by an admin of the channel. See the `mentioned` example above for usage, this decorator works in the same way.
+
+
 
 ## Example Bots
 1. https://github.com/SpiderOak/flowbot-respondbot
