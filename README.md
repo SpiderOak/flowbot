@@ -1,19 +1,21 @@
 # flowbot-barebones
 A boilerplate for quickly prototyping Flow (Semaphor) Bots!
 
-## Install
-Make sure both `flow-python` and `flowbot-barebones` are installed in your environment: 
+## Developing with `flowbot-barebones`
+To build a bot with flowbot barebones, you first need to install `flow-python` and `flowbot-barebones` into your local environment. Until both of those repos are listed on pypi, just run these commands:
+
 ```
 pip install git+git://github.com/SpiderOak/flow-python.git@master
-pip install git+git://github.com/SpiderOak/flowbot-barebones.git@master
-```
-
-> NOTE: While this is a private repo you will need to use `git+ssh`
-```
 pip install git+ssh://git@github.com/SpiderOak/flowbot-barebones.git@master
 ```
 
-## Usage
+You can now import the boilerpate bot:
+
+```python
+from flobot import Flowbot
+```
+
+### Example Usage
 Create a new bot class that inherits the FlowBot class. If you want your bot to respond to messages, you must implement the `commands` method which should return a dict that maps a trigger word to a method that accepts the triggering-message as a parameter. 
 
 ```python
@@ -56,8 +58,9 @@ Now just run your bot!
 python runbot.py
 ```
 
-## Bot Settings
+### Bot Settings
 When you initiate a FlowBot, you can provide some or all of the following settings
+
 - `username` (required): the username of your bot, if it doesn't exist yet, it will be created
 - `password` (required): the password of your bot
 - `org_id`(required): the id of the team you want your bot to be a member of
@@ -69,5 +72,28 @@ When you initiate a FlowBot, you can provide some or all of the following settin
 - `message_age_limit`: ignore channel messages older than this number of seconds (integer). Default is 120.
 
 
+### Public Methods
+
+#### `reply(original_message, msg, highlight=None`
+Reply to a flow message with the given response test. Optionally highlight a list of account_idss (will trigger a notification for those users in Semaphor).
+
+#### `message_channel(channel_id, msg, highlight=None)`
+Send a message to the given channel. Optionally highlithy a list of account_ids.
+
+
+#### `message_all_channels(msg, highlight=None)`
+Send a message to all channels this bot is a member of. Optionally highlithy a list of account_ids.
+
+#### `mentioned(messsage, account_id)`
+Determine if the account_id was mentioned in the given flow message. If no `account_id` was given, determine if this bot was mentioned.
+
+#### `from_admin(message)`
+Determine if the message was sent from an admin of the channel.
+
+#### `channels()`
+Returns a list of all channels this bot is a member of.
+
 ## Example Bots
 1. https://github.com/SpiderOak/flowbot-respondbot
+2. https://github.com/SpiderOak/flowbot-github
+3. https://github.com/SpiderOak/flowbot-twitter
