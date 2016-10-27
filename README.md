@@ -8,7 +8,7 @@ To build a bot with `flowbot`, you first need to install `flow-python` and `flow
 
 ```
 pip install git+git://github.com/SpiderOak/flow-python.git@master
-pip install git+ssh://git@github.com/SpiderOak/flowbot.git@master
+pip install git+git://github.com/SpiderOak/flowbot.git@master
 ```
 
 You can now import the boilerpate bot:
