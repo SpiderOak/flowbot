@@ -45,7 +45,7 @@ class Server(object):
         try:
             self.flow.create_device(
                 username=self.config.username,
-                password=self.config.username
+                password=self.config.password
             )
             return True
         except Flow.FlowError as create_device_err:
@@ -56,7 +56,7 @@ class Server(object):
         try:
             self.flow.create_account(
                 username=self.config.username,
-                password=self.config.username
+                password=self.config.password
             )
         except Flow.FlowError as create_account_err:
             LOG.debug("Create account failed: '%s'", str(create_account_err))
