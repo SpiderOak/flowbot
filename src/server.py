@@ -56,7 +56,8 @@ class Server(object):
         try:
             self.flow.create_account(
                 username=self.config.username,
-                password=self.config.password
+                password=self.config.password,
+                email_confirm_code=self.config.email_confirm_code,
             )
         except Flow.FlowError as create_account_err:
             LOG.debug("Create account failed: '%s'", str(create_account_err))
