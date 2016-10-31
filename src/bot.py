@@ -215,7 +215,7 @@ class FlowBot(object):
         is the function which processes the message.
         """
         commands = []
-        for commandKey, commandFunc in self.commands().iteritems():
+        for commandKey, commandFunc in self.commands().items():
             commands.append((commandKey, commandFunc))
         return commands
 
