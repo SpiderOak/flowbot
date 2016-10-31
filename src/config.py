@@ -16,6 +16,7 @@ class Config(object):
         """Create Config object from a settings dictionary."""
         self.username = self.get_or_raise(settings, 'username')
         self.password = self.get_or_raise(settings, 'password')
+        self.email_confirm_code = settings.get('email_confirm_code', None)
         self.org_id = self.get_or_raise(settings, 'org_id')
 
         self.display_name = settings.get('display_name', None)
