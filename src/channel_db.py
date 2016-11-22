@@ -38,7 +38,7 @@ class ChannelDb(object):
 
     def new(self, key, value):
         """Save a new record in both memory (self._data) and the db-channel."""
-        self._data.setdefault(key, []).append(value)
+        self._data.setdefault(key, self.get(key)).append(value)
 
         self.server.flow.send_message(
             cid=self._get_or_create_db_channel(),
