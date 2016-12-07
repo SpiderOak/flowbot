@@ -181,16 +181,25 @@ class FlowBot(object):
         return account_id in highlighted
 
     def from_admin(self, message):
-        """Determine if this message was sent from an admin of the org."""
-        if message['senderAccountId'] == self.account_id:
-            return False
+        """Determine if this message was sent from an admin of the channel or org."""
+        return self.from_channel_admin(message) or self.from_org_admin(message)
 
+    def from_channel_admin(self, message):
+        """Determine if this message was sent from an admin of the channel."""
         for member in self.server.flow.enumerate_channel_members(message['channelId']):  # NOQA
             if member['accountId'] == message['senderAccountId']:
                 if member['state'] in ['o', 'a']:
                     return True
         return False
 
+    def from_org_admin(self, message):
+        """Determine if this message was sent from an admin of the channel."""
+        for member in self.server.flow.enumerate_org_members(self.config.org_id):  # NOQA
+            if member['accountId'] == message['senderAccountId']:
+                if member['state'] in ['o', 'a']:
+                    return True
+        return False
+        
     def channels(self):
         """Return the list of channel ids to which this bot belongs."""
         channels = self.server.flow.enumerate_channels(self.config.org_id)
