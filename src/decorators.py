@@ -17,3 +17,21 @@ def admin_only(bot_command):
         if bot.from_admin(message):
             return bot_command(bot, message, *args, **kwargs)
     return _func
+
+
+def channel_admin_only(bot_command):
+    """Only execute the decorated bot command if the user is an admin."""
+    @wraps(bot_command)
+    def _func(bot, message, *args, **kwargs):
+        if bot.from_channel_admin(message):
+            return bot_command(bot, message, *args, **kwargs)
+    return _func
+
+
+def org_admin_only(bot_command):
+    """Only execute the decorated bot command if the user is an admin."""
+    @wraps(bot_command)
+    def _func(bot, message, *args, **kwargs):
+        if bot.from_org_admin(message):
+            return bot_command(bot, message, *args, **kwargs)
+    return _func
