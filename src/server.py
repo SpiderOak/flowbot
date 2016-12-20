@@ -20,7 +20,6 @@ class Server(object):
             db_dir=config.db_dir,
             attachment_dir=config.attachment_dir,
             use_tls=config.use_tls,
-            glue_out_filename=config.glue_out_filename,
             decrement_file=config.decrement_file
         )
 
