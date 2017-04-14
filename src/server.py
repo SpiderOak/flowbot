@@ -20,15 +20,16 @@ class Server(object):
             db_dir=config.db_dir,
             attachment_dir=config.attachment_dir,
             use_tls=config.use_tls,
-            decrement_file=config.decrement_file
+            decrement_file=config.decrement_file,
+            extra_config=config.extra_config,
         )
 
         if not self._start_server():
             if not self._setup_device():
                 self._setup_account()
 
-        self._setup_org()
         self._set_profile()
+        self._setup_org()
 
     def _start_server(self):
         """Attempt to start the flow server."""
@@ -59,14 +60,17 @@ class Server(object):
                 email_confirm_code=self.config.email_confirm_code,
             )
         except Flow.FlowError as create_account_err:
-            LOG.debug("Create account failed: '%s'", str(create_account_err))
+            LOG.error("Create account failed: '%s'", str(create_account_err))
 
     def _setup_org(self):
         """"Join the org if not already a member."""
         try:
             self.flow.new_org_join_request(oid=self.config.org_id)
         except Flow.FlowError as org_join_err:
-            LOG.debug("org join failed: '%s'", str(org_join_err))
+            if "Member Already" in str(org_join_err):
+                LOG.debug("already member of org %s", str(self.config.org_id))
+            else:
+                LOG.error("org join failed: '%s'", str(org_join_err))
 
     def _set_profile(self):
         """Set the user profile based on the items passed in the config."""
@@ -74,6 +78,5 @@ class Server(object):
             display_name=getattr(self.config, 'display_name', None),
             biography=getattr(self.config, 'biography', None),
             photo=getattr(self.config, 'photo', None),
-
         )
         self.flow.set_profile('profile', profile)

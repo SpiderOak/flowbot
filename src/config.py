@@ -26,15 +26,17 @@ class Config(object):
         self.message_age_limit = self.get_message_age(settings)
         self.db_channel = settings.get('db_channel', 'FLOWBOT_DB_CHANNEL')
         self.db_keys = settings.get('db_keys', [])
-        self.flowappglue = settings.get('flowappglue', definitions.get_default_flowappglue_path())  # NOQA
+        self.flowappglue = settings.get('flowappglue', "")
         self.uri = settings.get('uri', definitions.DEFAULT_URI)
         self.host = settings.get('host', definitions.DEFAULT_SERVER)
         self.port = settings.get('port', definitions.DEFAULT_PORT)
         self.db_dir = settings.get('db_dir', definitions.get_default_db_path())  # NOQA
-        self.schema_dir = settings.get('schema_dir', definitions.get_default_schema_path())  # NOQA
+        self.schema_dir = settings.get('schema_dir', "")
         self.attachment_dir = settings.get('attachment_dir', definitions.get_default_attachment_path())  # NOQA
         self.use_tls = settings.get('use_tls', definitions.DEFAULT_USE_TLS)
         self.decrement_file = settings.get('decrement_file', None)
+
+        self.extra_config = settings.get("extra_config", {})
 
     def get_or_raise(self, settings, key):
         """Return the settings value or raise 'ImproperlyConfigured'."""
