@@ -27,8 +27,8 @@ class Server(object):
         if not self._start_server():
             if not self._setup_device():
                 self._setup_account()
+                self._set_profile()
 
-        self._set_profile()
         self._setup_org()
 
     def _start_server(self):
