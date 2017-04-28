@@ -27,9 +27,9 @@ class Server(object):
         if not self._start_server():
             if not self._setup_device():
                 self._setup_account()
-                self._set_profile()
 
         self._setup_org()
+        self._set_profile()
 
     def _start_server(self):
         """Attempt to start the flow server."""
