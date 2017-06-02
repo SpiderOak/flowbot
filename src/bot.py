@@ -3,7 +3,6 @@ from .channel_db import ChannelDb
 from .server import Server
 from .config import Config
 import logging
-from datetime import datetime
 import threading
 import time
 import json
@@ -56,6 +55,7 @@ class FlowBot(object):
 
     def run(self, block=True):
         """Run the bot"""
+        cleaned = False
         try:
             LOG.info('FlowBot is starting up...')
             self.threads_running = True
@@ -70,12 +70,14 @@ class FlowBot(object):
             # Narrow window when not blocked that this could trigger
             # Avoid a potential race from other threads not stopping.
             self.cleanup()
+            cleaned = True
         except Exception:
             LOG.exception('FlowBot fatal exception')
             # Stop other threads to prevent deadlock
             self.cleanup()
+            cleaned = True
         finally:
-            if block:
+            if block and not cleaned:
                 # Always cleanup when blocked to clear the
                 # background thread.
                 self.cleanup()
@@ -106,7 +108,7 @@ class FlowBot(object):
                 except:
                     raise
             time.sleep(0.1)
-        LOG.info('Message queue thread hase ended...')
+        LOG.info('Message queue thread has ended...')
 
     def send_message(self, oid, cid, msg, attachments=None,
                      other_data=None, push_notify_account_ids=None,
@@ -181,7 +183,9 @@ class FlowBot(object):
         return account_id in highlighted
 
     def from_admin(self, message):
-        """Determine if this message was sent from an admin of the channel or org."""
+        """Determine if this message was sent from an admin
+        of the channel or org.
+        """
         return self.from_channel_admin(message) or self.from_org_admin(message)
 
     def from_channel_admin(self, message):
@@ -199,7 +203,7 @@ class FlowBot(object):
                 if member['state'] in ['o', 'a']:
                     return True
         return False
-        
+
     def channels(self):
         """Return the list of channel ids to which this bot belongs."""
         channels = self.server.flow.enumerate_channels(self.config.org_id)
@@ -243,8 +247,6 @@ class FlowBot(object):
         """
         if 'creationTime' not in message:
             return False
-
-        creation_time = datetime.utcfromtimestamp(message['creationTime'] / 1000.0)  # NOQA
-        now_time = datetime.utcnow()
-        age = now_time - creation_time
-        return age.seconds > self.config.message_age_limit
+        creation_time = message['creationTime'] / 1000.0
+        age = time.time() - creation_time
+        return age > self.config.message_age_limit
